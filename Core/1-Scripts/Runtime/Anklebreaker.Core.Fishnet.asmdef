@@ -1,0 +1,19 @@
+{
+    "name": "Anklebreaker.Core.Fishnet",
+    "rootNamespace": "",
+    "references": [
+        "GUID:7c88a4a7926ee5145ad2dfa06f454c67",
+        "GUID:2a6a8b2177bea7c4db854edfe550166d",
+        "GUID:e26130c933c5f3344b8afc5301c98c34",
+        "GUID:427d4dfb6bf9e684d86e063fe4ccd317"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
