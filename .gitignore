@@ -1,0 +1,39 @@
+﻿# Unity
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# IDE
+.vs/
+.vscode/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Unity meta files (keep in Unity projects, not needed in package repo)
+# *.meta
+
+# Builds
+*.apk
+*.aab
+*.unitypackage
+*.app
