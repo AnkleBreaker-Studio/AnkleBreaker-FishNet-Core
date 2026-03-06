@@ -2,8 +2,8 @@
     "name": "AnkleBreaker.Utils.Fishnet.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:b1c540d7c0b7fa846ba35b5252be45cf",
-        "GUID:7c88a4a7926ee5145ad2dfa06f454c67"
+        "FishNet.Runtime",
+        "AnkleBreaker.Utils.Fishnet"
     ],
     "includePlatforms": [
         "Editor"
