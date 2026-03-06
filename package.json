@@ -1,6 +1,6 @@
 ﻿{
   "name": "com.anklebreaker-studio.fishnet-core",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "displayName": "AnkleBreaker-studio FishNet Core",
   "description": "Core FishNet networking layer for AnkleBreaker Studio.\n\nProvides the foundational networking abstractions and utilities for FishNet-based multiplayer games.\n\nIt includes:\n- AnkleBreakerNetworkBehaviour: Abstract base class extending NetworkBehaviour with lifecycle management, SyncVar reset, ownership tracking, and player connect/disconnect callbacks\n- AKSinglePrefabs: Custom SinglePrefabObjects wrapper with null cleanup\n- Extension methods for NetworkConnection (GetPlayerObjectId, GetPlayerObject)\n- Extension methods for int-based ObjectId lookups (TryGetNetworkObjectFromObjectId, L_IsLocalPlayerNobId)\n- SinglePrefabObjects extensions (LookupSpawnablePrefab)\n- Custom editor with NetPrefabsSelectorWindow for network prefab selection\n\nThis package requires:\n- FishNet (Fish-Networking)",
   "unity": "2022.3",
