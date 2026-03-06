@@ -2,9 +2,9 @@
     "name": "Anklebreaker.Core.Fishnet",
     "rootNamespace": "",
     "references": [
-        "GUID:7c88a4a7926ee5145ad2dfa06f454c67",
-        "GUID:e26130c933c5f3344b8afc5301c98c34",
-        "GUID:463f92f67f4143d47b96cc2378cb8869"
+        "FishNet.Runtime",
+        "AnkleBreaker.Core",
+        "AnkleBreaker.Utils.Inspector"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
