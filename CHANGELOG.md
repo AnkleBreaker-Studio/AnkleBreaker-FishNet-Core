@@ -5,6 +5,13 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-03-06
+
+### Added
+* [FEAT] FishNetCoreDependenciesInstaller — auto-detects missing FishNet (Fish-Networking) on editor load via `#if !FISHNET` and shows a popup
+* [FEAT] FishNetRequiredWindow — info-only EditorWindow notifying users that FishNet is required, with links to Asset Store and GitHub, remind later and dismiss per session
+* [FEAT] Dedicated Installer assembly definition (AnkleBreaker.FishNetCore.Installer.Editor) — Editor-only, no defineConstraints to ensure it compiles without FishNet
+
 ## [1.0.0] - 2026-03-05
 
 * [FEAT] Initial public release of AnkleBreaker FishNet Core
