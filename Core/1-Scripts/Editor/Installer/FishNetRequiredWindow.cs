@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -5,114 +6,229 @@ namespace AnkleBreaker.FishNetCore.Editor
 {
     public class FishNetRequiredWindow : EditorWindow
     {
-        private static GUIStyle _titleStyle;
-        private static GUIStyle _messageStyle;
-        private static GUIStyle _warningStyle;
+        private bool _isInstalling;
 
         public static void ShowWindow()
         {
-            var window = GetWindow<FishNetRequiredWindow>(true, "AnkleBreaker FishNet Core - Missing FishNet", true);
-            window.minSize = new Vector2(500, 280);
-            window.maxSize = new Vector2(500, 280);
-            window.ShowUtility();
+            var window = GetWindow<FishNetRequiredWindow>(
+                true, "AnkleBreaker FishNet Core \u2014 Dependencies");
+            window.minSize = new Vector2(540, 440);
+            window.maxSize = new Vector2(540, 500);
         }
 
         private void OnGUI()
         {
-            InitStyles();
-
-            EditorGUILayout.Space(15);
-            EditorGUILayout.LabelField("FishNet Required", _titleStyle);
             EditorGUILayout.Space(10);
 
-            EditorGUILayout.LabelField(
-                "AnkleBreaker FishNet Core requires FishNet (Fish-Networking) to function.\n\n" +
-                "FishNet was not detected in this project. Please install FishNet before using this package.\n\n" +
-                "You can get FishNet from the Unity Asset Store or from the official GitHub repository.",
-                _messageStyle);
+            // ── Header ──
+            var headerStyle = new GUIStyle(EditorStyles.boldLabel)
+            {
+                fontSize = 16,
+                alignment = TextAnchor.MiddleCenter
+            };
+            EditorGUILayout.LabelField("AnkleBreaker FishNet Core", headerStyle);
+            EditorGUILayout.LabelField("Dependencies", EditorStyles.centeredGreyMiniLabel);
+            EditorGUILayout.Space(8);
 
-            EditorGUILayout.Space(10);
+            var deps = FishNetCoreDependenciesInstaller.GetDependencies();
+            bool fishnetInstalled = FishNetCoreDependenciesInstaller.IsFishNetInstalled();
+            bool fishnetV4 = FishNetCoreDependenciesInstaller.IsFishNetV4OrHigher();
+            bool allSatisfied = fishnetV4;
 
-            EditorGUILayout.LabelField(
-                "Please install FishNet to continue.",
-                _warningStyle);
+            // ── Status box with per-dependency rows ──
+            EditorGUILayout.BeginVertical("box");
+            foreach (var dep in deps)
+            {
+                DrawDependencyRow(dep, fishnetInstalled, fishnetV4);
+            }
+            EditorGUILayout.EndVertical();
 
-            EditorGUILayout.Space(15);
+            EditorGUILayout.Space(8);
 
-            // Action buttons
+            if (allSatisfied)
+            {
+                // ── All good ──
+                EditorGUILayout.HelpBox(
+                    "All dependencies are installed! AnkleBreaker FishNet Core is ready to use.",
+                    MessageType.Info);
+            }
+            else if (fishnetInstalled && !fishnetV4)
+            {
+                // ── FishNet installed but wrong version ──
+                EditorGUILayout.HelpBox(
+                    "FishNet is installed but the detected version is NOT compatible.\n\n" +
+                    "AnkleBreaker FishNet Core requires FishNet 4.x+ which uses the " +
+                    "SyncVar<T> generic class with .Value property.\n\n" +
+                    "Your current version uses the old attribute-based [SyncVar] system " +
+                    "which is NOT supported. Please update FishNet to version 4.x or higher.",
+                    MessageType.Error);
+
+                EditorGUILayout.Space(8);
+                DrawInstallButtons(deps.First());
+            }
+            else
+            {
+                // ── FishNet not installed at all ──
+                EditorGUILayout.HelpBox(
+                    "AnkleBreaker FishNet Core requires FishNet 4.x+ (the version with " +
+                    "SyncVar<T> generic class and .Value property).\n\n" +
+                    "Older versions using the attribute-based [SyncVar] system are NOT compatible.\n\n" +
+                    "You can install FishNet from GitHub (via UPM) or from the Unity Asset Store.",
+                    MessageType.Warning);
+
+                EditorGUILayout.Space(8);
+                DrawInstallButtons(deps.First());
+            }
+
+            GUILayout.FlexibleSpace();
+
+            // ── Bottom buttons ──
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("Open Asset Store", GUILayout.Width(150), GUILayout.Height(35)))
+            if (allSatisfied)
             {
-                Application.OpenURL("https://assetstore.unity.com/packages/tools/network/fish-net-networking-evolved-207815");
+                if (GUILayout.Button("OK", GUILayout.Width(100), GUILayout.Height(28)))
+                    Close();
             }
-
-            GUILayout.Space(10);
-
-            if (GUILayout.Button("Open GitHub", GUILayout.Width(150), GUILayout.Height(35)))
+            else
             {
-                Application.OpenURL("https://github.com/FirstGearGames/FishNet");
+                if (GUILayout.Button("I understand, this package will not work", GUILayout.Width(300), GUILayout.Height(28)))
+                {
+                    SessionState.SetBool(FishNetCoreDependenciesInstaller.SESSION_KEY, true);
+                    Close();
+                }
+
+                GUILayout.Space(8);
+
+                if (GUILayout.Button("Recheck", GUILayout.Width(80), GUILayout.Height(28)))
+                {
+                    // Re-evaluate defines
+                    if (FishNetCoreDependenciesInstaller.IsFishNetV4OrHigher())
+                        FishNetCoreDependenciesInstaller.EnsureFishNetV4Define();
+                    Repaint();
+                }
             }
 
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
 
-
-            EditorGUILayout.Space(10);
-
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-
-            if (GUILayout.Button("Remind Me Later", GUILayout.Width(140), GUILayout.Height(25)))
-            {
-                Close();
-            }
-
-            GUILayout.Space(10);
-
-            if (GUILayout.Button("Don't Show Again (this session)", GUILayout.Width(250), GUILayout.Height(25)))
-            {
-                SessionState.SetBool(FishNetCoreDependenciesInstaller.DISMISSED_KEY, true);
-                Close();
-            }
-
-            GUILayout.FlexibleSpace();
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.Space(10);
+            EditorGUILayout.Space(8);
         }
 
-        private static void InitStyles()
+        private void DrawInstallButtons(FishNetDependencyInfo dep)
         {
-            if (_titleStyle == null)
+            var sectionLabelStyle = new GUIStyle(EditorStyles.boldLabel)
             {
-                _titleStyle = new GUIStyle(EditorStyles.boldLabel)
-                {
-                    fontSize = 16,
-                    alignment = TextAnchor.MiddleCenter
-                };
+                fontSize = 12,
+                alignment = TextAnchor.MiddleCenter
+            };
+
+            // Section labels row
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.LabelField("GitHub", sectionLabelStyle, GUILayout.Width(206));
+            GUILayout.Space(20);
+            EditorGUILayout.LabelField("Asset Store", sectionLabelStyle, GUILayout.Width(206));
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(4);
+
+            // Buttons row
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+
+            // GitHub: Visit + Install
+            if (GUILayout.Button("Visit", GUILayout.Width(100), GUILayout.Height(30)))
+                Application.OpenURL(dep.GitPageUrl);
+
+            GUILayout.Space(6);
+
+            var gitInstallContent = new GUIContent("Install",
+                "Install FishNet via the Unity Package Manager from the GitHub repository.");
+
+            EditorGUI.BeginDisabledGroup(_isInstalling);
+            if (GUILayout.Button(gitInstallContent, GUILayout.Width(100), GUILayout.Height(30)))
+            {
+                _isInstalling = true;
+                FishNetCoreDependenciesInstaller.InstallViaGit(dep);
+                EditorUtility.DisplayDialog(
+                    "FishNet Installation",
+                    "FishNet is being installed via the Unity Package Manager.\nPlease wait for the import to complete.",
+                    "OK");
+            }
+            EditorGUI.EndDisabledGroup();
+
+            GUILayout.Space(20);
+
+            // Asset Store: Visit + Install
+            if (GUILayout.Button("Visit", GUILayout.Width(100), GUILayout.Height(30)))
+                Application.OpenURL(dep.AssetStoreUrl);
+
+            GUILayout.Space(6);
+
+            var assetStoreInstallContent = new GUIContent("Install",
+                "Opens the Package Manager on FishNet. You must first add FishNet to your Unity account (free) via the Asset Store website.");
+
+            if (GUILayout.Button(assetStoreInstallContent, GUILayout.Width(100), GUILayout.Height(30)))
+                Application.OpenURL(dep.AssetStoreDeepLink);
+
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void DrawDependencyRow(FishNetDependencyInfo dep, bool fishnetInstalled, bool fishnetV4)
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            // Status icon
+            bool installing = !fishnetV4 && _isInstalling;
+            Color dotColor;
+            string status;
+
+            if (fishnetV4)
+            {
+                dotColor = Color.green;
+                status = "Installed (4.x+)";
+            }
+            else if (fishnetInstalled)
+            {
+                dotColor = new Color(1f, 0.6f, 0f); // Orange — wrong version
+                status = "WRONG VERSION (needs 4.x+)";
+            }
+            else if (installing)
+            {
+                dotColor = new Color(1f, 0.6f, 0f);
+                status = "Installing...";
+            }
+            else
+            {
+                dotColor = Color.red;
+                status = "MISSING";
             }
 
-            if (_messageStyle == null)
+            var iconName = fishnetV4 ? "d_greenLight" : fishnetInstalled ? "d_orangeLight" : "d_redLight";
+            var icon = EditorGUIUtility.IconContent(iconName);
+            if (icon != null && icon.image != null)
             {
-                _messageStyle = new GUIStyle(EditorStyles.wordWrappedLabel)
-                {
-                    fontSize = 12,
-                    padding = new RectOffset(15, 15, 0, 0)
-                };
+                GUILayout.Label(icon, GUILayout.Width(20), GUILayout.Height(20));
+            }
+            else
+            {
+                var rect = GUILayoutUtility.GetRect(20, 20, GUILayout.Width(20), GUILayout.Height(20));
+                EditorGUI.DrawRect(new Rect(rect.x + 4, rect.y + 4, 12, 12), dotColor);
             }
 
-            if (_warningStyle == null)
+            // Label
+            var style = new GUIStyle(EditorStyles.label)
             {
-                _warningStyle = new GUIStyle(EditorStyles.wordWrappedLabel)
-                {
-                    fontSize = 12,
-                    fontStyle = FontStyle.Bold,
-                    alignment = TextAnchor.MiddleCenter
-                };
-                _warningStyle.normal.textColor = new Color(1f, 0.6f, 0f);
-            }
+                fontSize = 13,
+                fontStyle = fishnetV4 ? FontStyle.Normal : FontStyle.Bold
+            };
+            EditorGUILayout.LabelField($"{dep.DisplayName}  \u2014  {status}", style);
+
+            EditorGUILayout.EndHorizontal();
         }
     }
 }
