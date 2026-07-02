@@ -5,12 +5,8 @@ using AnkleBreaker.Utils.Inspector;
 
 namespace AnkleBreaker.Core.MasterClasses
 {
-    /// <summary>
-    /// Base class for networked Managers (and any loader-managed, bus-subscribing behaviour).
-    /// Lifecycle: Awake -> RegisterSyncVarEvents (local .OnChange subscriptions);
-    /// OnStartNetwork -> EventHandlerRegister then IsLocallyReady = true (the readiness flag
-    /// the ManagersLoader waits on); OnStopNetwork -> EventHandlerUnRegister.
-    /// </summary>
+    /// <summary>Base class for networked Managers. OnStartNetwork registers the bus then
+    /// flips IsLocallyReady — the flag the ManagersLoader waits on.</summary>
     public abstract class AnkleBreakerNetworkBehaviour : NetworkBehaviour, IIsReady
     {
         #region Properties
@@ -25,10 +21,8 @@ namespace AnkleBreaker.Core.MasterClasses
             RegisterSyncVarEvents();
         }
 
-        /// <summary>
-        /// Conventional slot for local SyncVar .OnChange subscriptions (instance-scoped,
-        /// not the static bus). Called once from Awake.
-        /// </summary>
+        /// <summary>Slot for local SyncVar .OnChange subscriptions (instance-scoped, not the
+        /// static bus). Called once from Awake.</summary>
         protected virtual void RegisterSyncVarEvents() { }
 
         public override void OnStartNetwork()
