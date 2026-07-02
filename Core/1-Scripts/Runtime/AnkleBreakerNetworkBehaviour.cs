@@ -1,39 +1,41 @@
-﻿using FishNet.Object;
-using FishNet.Object.Synchronizing;
+using FishNet.Object;
 using UnityEngine;
 using UnityEngine.Profiling;
 using AnkleBreaker.Core.MasterInterfaces;
 using AnkleBreaker.Utils.Inspector;
-using FishNet.Connection;
 
 namespace AnkleBreaker.Core.MasterClasses
 {
+    /// <summary>
+    /// Base class for networked Managers (and any loader-managed, bus-subscribing behaviour).
+    /// Lifecycle: Awake -> RegisterSyncVarEvents (local .OnChange subscriptions);
+    /// OnStartNetwork -> EventHandlerRegister then IsLocallyReady = true (the readiness flag
+    /// the ManagersLoader waits on); OnStopNetwork -> EventHandlerUnRegister.
+    /// </summary>
     public abstract class AnkleBreakerNetworkBehaviour : NetworkBehaviour, IIsReady
     {
         #region Properties
         [field: SerializeField, HideInNormalInspector,
-                Tooltip("Set to true once OnStartClient/Server is over")]
+                Tooltip("Set to true once OnStartNetwork has run (events registered)")]
         public bool IsLocallyReady { get; protected set; }
-        
-        private readonly SyncVar<ulong> Sync_resetBehaviour = new SyncVar<ulong>(0);
         #endregion
 
         #region Events Registering
-
         public virtual void Awake()
         {
             RegisterSyncVarEvents();
         }
 
-        protected virtual void RegisterSyncVarEvents()
-        {
-            Sync_resetBehaviour.OnChange += OnSyncVarResetBehaviourChanged;
-        }
-        
+        /// <summary>
+        /// Conventional slot for local SyncVar .OnChange subscriptions (instance-scoped,
+        /// not the static bus). Called once from Awake.
+        /// </summary>
+        protected virtual void RegisterSyncVarEvents() { }
+
         public override void OnStartNetwork()
         {
             base.OnStartNetwork();
-            Profiler.BeginSample("ABNetwork.StartServer." + this.GetType().Name);
+            Profiler.BeginSample("ABNetwork.EventHandlerRegister." + GetType().Name);
             EventHandlerRegister();
             Profiler.EndSample();
             IsLocallyReady = true;
@@ -45,91 +47,8 @@ namespace AnkleBreaker.Core.MasterClasses
             EventHandlerUnRegister();
         }
 
-        public void ResetBehaviour()
-        {
-            Sync_resetBehaviour.Value++;
-        }
-
-        private void OnSyncVarResetBehaviourChanged(ulong prev, ulong next, bool asServer)
-        {
-            OnResetBehaviour(asServer);
-        }
-
-        protected virtual void OnResetBehaviour(bool asServer)
-        {
-
-        }
-
         protected abstract void EventHandlerRegister();
         protected abstract void EventHandlerUnRegister();
-        #endregion
-
-        #region On Owner is Ready
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-            if (IsOwner)
-                S_RpcClientOwnerIsReady();
-        }
-
-        [ServerRpc] void S_RpcClientOwnerIsReady() => S_OnClientOwnerIsReady();
-
-        /// <summary>
-        /// Called when Client is ready
-        /// </summary>
-        [Server]
-        protected virtual void S_OnClientOwnerIsReady() { }
-        
-        public override void OnOwnershipServer(NetworkConnection prevOwner)
-        {
-            base.OnOwnershipServer(prevOwner);
-            if (prevOwner != null && prevOwner.IsValid)
-            {
-                if (Owner == null || Owner.IsValid == false)
-                {
-                    S_OnPlayerDisconnect();
-                }
-            }
-            else
-            {
-                if (Owner != null && Owner.IsValid)
-                {
-                    S_OnPlayerConnect();
-                }
-            }
-        }
-
-		public override void OnOwnershipClient(NetworkConnection prevOwner)
-		{
-			base.OnOwnershipClient(prevOwner);
-			if (prevOwner != null && prevOwner.IsValid)
-			{
-				if (Owner == null || Owner.IsValid == false)
-				{
-					C_OnPlayerDisconnect();
-				}
-			}
-			else
-			{
-				if (Owner != null && Owner.IsValid)
-				{
-					C_OnPlayerConnect();
-				}
-			}
-		}
-
-		[Server]
-        protected virtual void S_OnPlayerConnect() { }
-        
-        [Server]
-        protected virtual void S_OnPlayerDisconnect() { }
-
-        [Client]
-        protected virtual void C_OnPlayerConnect() { }
-
-        [Client]
-        protected virtual void C_OnPlayerDisconnect() { }
-        
         #endregion
 
         #region Other Methods

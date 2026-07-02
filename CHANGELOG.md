@@ -8,11 +8,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [1.2.0] - 2026-07-02
 
 ### Added
-* AnkleBreakerNetworkController: base class for networked Controllers — EventHandlerRegister/UnRegister are sealed empty, so a Controller cannot subscribe to the event bus (compile-enforced); keeps SyncVars, reset and owner/connection hooks from AnkleBreakerNetworkBehaviour
+* AnkleBreakerNetworkController: base class for networked Controllers — derives plain NetworkBehaviour and carries none of the bus registration/readiness machinery (no EventHandlerRegister, no IIsReady): a Controller has nothing to subscribe with; keeps the Awake -> RegisterSyncVarEvents slot for local SyncVar .OnChange subscriptions
 * Script templates (moved from AnkleBreaker-Core and split): AnkleBreaker_NetworkBehaviour (register guards suggested in Register only, UnRegister always unconditional), AnkleBreaker_NetworkController (no registration blocks), AnkleBreaker_NetworkHandlerData (canonical Notifications/Commands/Queries sections, S_/C_ naming, one XML summary per event)
 
 ### Changed
-* AnkleBreakerNetworkBehaviour: rename ServerRpc SR_ClientOwnerIsReady to S_RpcClientOwnerIsReady (studio RPC naming convention S_Rpc{X}); private method, no consumer impact — both sides must run the same package version
+* AnkleBreakerNetworkBehaviour: flattened to its actual role (networked Managers) — Awake -> RegisterSyncVarEvents slot, OnStartNetwork -> EventHandlerRegister -> IsLocallyReady, OnStopNetwork -> EventHandlerUnRegister; profiler sample label fixed (was "StartServer", it measures the register), IsLocallyReady tooltip fixed (OnStartNetwork, not OnStartClient/Server)
+
+### Removed
+* AnkleBreakerNetworkBehaviour: ResetBehaviour / Sync_resetBehaviour — pooling reset is native in FishNet 4: override ResetState(bool asServer) and call base, which also resets all SyncTypes; every networked object no longer carries an extra SyncVar
+* AnkleBreakerNetworkBehaviour: owner-ready ServerRpc (SR_ClientOwnerIsReady / S_OnClientOwnerIsReady) — use OnStartClient + IsOwner, or OnSpawnServer (2 usages in studio history)
+* AnkleBreakerNetworkBehaviour: OnOwnership-driven S_/C_OnPlayerConnect/Disconnect hooks — misleading names (ownership change, not connection); use FishNet connection events (ServerManager.OnRemoteConnectionState, ClientManager.OnClientConnectionState) or override OnOwnershipServer/Client directly
 
 ## [1.1.1] - 2026-03-06
 
