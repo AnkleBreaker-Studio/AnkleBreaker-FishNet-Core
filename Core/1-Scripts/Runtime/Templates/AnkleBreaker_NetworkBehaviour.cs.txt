@@ -1,0 +1,30 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using AnkleBreaker.Core.MasterClasses;
+
+public class #SCRIPTNAME# : AnkleBreakerNetworkBehaviour
+{
+    #region Serialized Fields
+    #NOTRIM#
+    #endregion
+
+    #region Private Fields
+    #NOTRIM#
+    #endregion
+
+    protected override void EventHandlerRegister()
+    {
+        // Guards are allowed here (Register MAY be conditional):
+        //if (IsServerInitialized)
+        #NOTRIM#
+        //if (IsClientInitialized)
+        #NOTRIM#
+    }
+
+    protected override void EventHandlerUnRegister()
+    {
+        // NEVER conditional — one -= for every possible +=
+        #NOTRIM#
+    }
+}

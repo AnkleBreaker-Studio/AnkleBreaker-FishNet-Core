@@ -1,0 +1,20 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using AnkleBreaker.Core.MasterClasses;
+
+/// <summary>
+/// Networked Controller: driven by its Manager (direct intra-feature reference), never
+/// subscribes to the event bus. Holds per-instance state via SyncVars; push intent via the
+/// feature HandlerData Request helpers.
+/// </summary>
+public class #SCRIPTNAME# : AnkleBreakerNetworkController
+{
+    #region Serialized Fields
+    #NOTRIM#
+    #endregion
+
+    #region Private Fields
+    #NOTRIM#
+    #endregion
+}

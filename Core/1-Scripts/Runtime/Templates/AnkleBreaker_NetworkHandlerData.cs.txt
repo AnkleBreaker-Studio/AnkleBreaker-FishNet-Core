@@ -1,0 +1,28 @@
+using System;
+using AnkleBreaker.Core.MasterDelegates;
+
+/// <summary>
+/// Static event bus for the feature. Pure contract: events + invoke helpers only —
+/// no fields, no state, no logic beyond ?.Invoke().
+/// </summary>
+public static class #SCRIPTNAME#
+{
+    // === Notifications ===
+    /// <summary>Fired by the Manager after a server-validated state change. Describe params + who listens.</summary>
+    public static event Action OnExampleChanged;
+    public static void NotifyExampleChanged() => OnExampleChanged?.Invoke();
+
+    // === Commands ===
+    /// <summary>Client intent; the Manager subscribed to it triggers the server flow (S_Rpc...).</summary>
+    public static event Action C_OnRequestExample;
+    public static void C_RequestExample() => C_OnRequestExample?.Invoke();
+
+    /// <summary>Server-only command, fired and handled on the server.</summary>
+    public static event Action S_OnRequestExample;
+    public static void S_RequestExample() => S_OnRequestExample?.Invoke();
+
+    // === Queries ===
+    /// <summary>Synchronous data pull via ref; answered by the feature's Manager.</summary>
+    public static event ActionRef<int> OnQueryExample;
+    public static void QueryExample(ref int value) => OnQueryExample?.Invoke(ref value);
+}

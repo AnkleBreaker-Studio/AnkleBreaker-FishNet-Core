@@ -69,10 +69,10 @@ namespace AnkleBreaker.Core.MasterClasses
         {
             base.OnStartClient();
             if (IsOwner)
-                SR_ClientOwnerIsReady();
+                S_RpcClientOwnerIsReady();
         }
 
-        [ServerRpc] void SR_ClientOwnerIsReady() => S_OnClientOwnerIsReady();
+        [ServerRpc] void S_RpcClientOwnerIsReady() => S_OnClientOwnerIsReady();
 
         /// <summary>
         /// Called when Client is ready

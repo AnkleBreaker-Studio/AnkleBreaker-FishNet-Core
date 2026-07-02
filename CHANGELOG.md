@@ -5,6 +5,15 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-02
+
+### Added
+* AnkleBreakerNetworkController: base class for networked Controllers — EventHandlerRegister/UnRegister are sealed empty, so a Controller cannot subscribe to the event bus (compile-enforced); keeps SyncVars, reset and owner/connection hooks from AnkleBreakerNetworkBehaviour
+* Script templates (moved from AnkleBreaker-Core and split): AnkleBreaker_NetworkBehaviour (register guards suggested in Register only, UnRegister always unconditional), AnkleBreaker_NetworkController (no registration blocks), AnkleBreaker_NetworkHandlerData (canonical Notifications/Commands/Queries sections, S_/C_ naming, one XML summary per event)
+
+### Changed
+* AnkleBreakerNetworkBehaviour: rename ServerRpc SR_ClientOwnerIsReady to S_RpcClientOwnerIsReady (studio RPC naming convention S_Rpc{X}); private method, no consumer impact — both sides must run the same package version
+
 ## [1.1.1] - 2026-03-06
 
 ### Changed
