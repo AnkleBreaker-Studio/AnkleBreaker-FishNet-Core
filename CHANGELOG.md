@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * Script templates (moved from AnkleBreaker-Core and split): AnkleBreaker_NetworkBehaviour (register guards suggested in Register only, UnRegister always unconditional), AnkleBreaker_NetworkController (no registration blocks), AnkleBreaker_NetworkHandlerData (canonical Notifications/Commands/Queries sections, S_/C_ naming, one XML summary per event)
 
 ### Changed
-* AnkleBreakerNetworkBehaviour: flattened to its actual role (networked Managers) — Awake -> RegisterSyncVarEvents slot, OnStartNetwork -> EventHandlerRegister -> IsLocallyReady, OnStopNetwork -> EventHandlerUnRegister; profiler sample label fixed (was "StartServer", it measures the register), IsLocallyReady tooltip fixed (OnStartNetwork, not OnStartClient/Server)
+* AnkleBreakerNetworkBehaviour: flattened to its actual role (networked Managers) — Awake -> RegisterSyncVarEvents slot, OnStartNetwork -> EventHandlerRegister -> IsLocallyReady, OnStopNetwork -> EventHandlerUnRegister; profiler sample removed from OnStartNetwork, IsLocallyReady tooltip fixed (OnStartNetwork, not OnStartClient/Server)
 
 ### Removed
 * AnkleBreakerNetworkBehaviour: ResetBehaviour / Sync_resetBehaviour — pooling reset is native in FishNet 4: override ResetState(bool asServer) and call base, which also resets all SyncTypes; every networked object no longer carries an extra SyncVar

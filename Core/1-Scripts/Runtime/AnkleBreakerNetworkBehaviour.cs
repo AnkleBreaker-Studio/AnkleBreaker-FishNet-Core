@@ -1,6 +1,5 @@
 using FishNet.Object;
 using UnityEngine;
-using UnityEngine.Profiling;
 using AnkleBreaker.Core.MasterInterfaces;
 using AnkleBreaker.Utils.Inspector;
 
@@ -35,9 +34,7 @@ namespace AnkleBreaker.Core.MasterClasses
         public override void OnStartNetwork()
         {
             base.OnStartNetwork();
-            Profiler.BeginSample("ABNetwork.EventHandlerRegister." + GetType().Name);
             EventHandlerRegister();
-            Profiler.EndSample();
             IsLocallyReady = true;
         }
 
