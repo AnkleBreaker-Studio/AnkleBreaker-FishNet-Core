@@ -5,6 +5,21 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-10-22
+
+### Fixed
+* Missing FishNet no longer opens the dependency window on editor startup or domain reload. The installer remains available from Tools > AnkleBreaker > Dependencies Installer > FishNet Core.
+* Closing the manual installer no longer records a session dismissal. Automatic FishNet version detection and FISHNET_V4 define synchronization are preserved.
+
+### Added
+* EditMode regression tests for background dependency checks and manual window access.
+
+## [1.1.1] - 2026-03-06
+
+### Changed
+* Migrated dependencies from deprecated AnkleBreaker-Utils to new split packages (AnkleBreaker-Core, AnkleBreaker-Utils-Inspector)
+* Replaced GUID-based assembly references with assembly name references in all .asmdef files
+
 ## [1.1.0] - 2026-03-06
 
 ### Added

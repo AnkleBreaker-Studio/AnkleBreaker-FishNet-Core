@@ -14,7 +14,7 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [
-        "FISHNET"
+        "FISHNET_V4"
     ],
     "versionDefines": [],
     "noEngineReferences": false
