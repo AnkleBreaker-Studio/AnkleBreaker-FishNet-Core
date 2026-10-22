@@ -26,6 +26,12 @@ Add via Unity Package Manager using the Git URL:
 https://github.com/AnkleBreaker-Studio/AnkleBreaker-FishNet-Core.git
 ```
 
+## Dependency Setup
+
+Open **Tools > AnkleBreaker > Dependencies Installer > FishNet Core** to check or install FishNet. The dependency window opens only from this menu, including when FishNet is missing.
+
+FishNet version detection and the FISHNET_V4 compilation define still update automatically after a domain reload.
+
 ## Quick Start
 
 1. Install the package via the Package Manager

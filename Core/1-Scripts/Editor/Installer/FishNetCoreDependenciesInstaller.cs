@@ -55,16 +55,12 @@ namespace AnkleBreaker.FishNetCore.Editor
         {
             EditorApplication.delayCall += () =>
             {
-                // Manage FISHNET_V4 scripting define
+                // Keep compilation defines current without opening the manual installer.
                 if (IsFishNetV4OrHigher())
                     EnsureFishNetV4Define();
                 else
                     RemoveFishNetV4DefineIfNeeded();
 
-                if (AllDependenciesSatisfied()) return;
-                if (SessionState.GetBool(SESSION_KEY, false)) return;
-                SessionState.SetBool(SESSION_KEY, true);
-                FishNetRequiredWindow.ShowWindow();
             };
         }
 

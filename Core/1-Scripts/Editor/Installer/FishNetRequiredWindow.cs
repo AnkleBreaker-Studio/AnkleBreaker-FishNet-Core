@@ -93,9 +93,8 @@ namespace AnkleBreaker.FishNetCore.Editor
             }
             else
             {
-                if (GUILayout.Button("I understand, this package will not work", GUILayout.Width(300), GUILayout.Height(28)))
+                if (GUILayout.Button("Close", GUILayout.Width(100), GUILayout.Height(28)))
                 {
-                    SessionState.SetBool(FishNetCoreDependenciesInstaller.SESSION_KEY, true);
                     Close();
                 }
 
